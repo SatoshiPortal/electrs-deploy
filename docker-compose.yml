@@ -1,0 +1,86 @@
+# https://github.com/buchdag/letsencrypt-nginx-proxy-companion-compose/blob/master/2-containers/compose-v3/labels/docker-compose.yaml
+
+version: '3'
+
+services:
+
+  bitcoin:
+    command: 1000:1000 bitcoind
+    image: cyphernode/bitcoin:v0.17.0
+    volumes:
+      - "$HOME/data/bitcoin:/.bitcoin"
+    restart: always
+    networks:
+      - electrsnet
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "50002:443"
+    volumes:
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - dhparam:/etc/nginx/dhparam
+      - certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    labels:
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
+    restart: always
+    networks:
+      - electrsnet
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    environment:
+      - "NGINX_PROXY_CONTAINER=nginx-proxy"
+    depends_on:
+      - nginx-proxy
+    volumes:
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - dhparam:/etc/nginx/dhparam:ro
+      - certs:/etc/nginx/certs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: always
+    networks:
+      - electrsnet
+
+# docker run -d -p 8080:80 -v /home/debian/data_bitcoin_mainnet:/data --rm esplora bash -c "/srv/explorer/run.sh bitcoin-mainnet explorer"
+  electrs:
+    image: electrs-app:latest
+    command: electrs -vvvv --timestamp --db-dir /home/user/db --daemon-rpc-addr=bitcoin:8332
+    depends_on:
+      - letsencrypt
+    env_file:
+      - electrs.env
+    volumes:
+      - "$HOME/data/bitcoin:/home/user/.bitcoin:ro"
+      - "$HOME/data/electrs:/home/user"
+    restart: always
+    networks:
+      - electrsnet
+
+  tor:
+    image: tor:latest
+    command: tor -f /home/tor/tor/torrc
+    depends_on:
+      - electrs
+    volumes:
+      - "$HOME/data/tor:/home/tor/tor"
+    restart: always
+    networks:
+      - electrsnet
+
+volumes:
+  conf:
+  vhost:
+  html:
+  dhparam:
+  certs:
+
+networks:
+  electrsnet:
+    external: true

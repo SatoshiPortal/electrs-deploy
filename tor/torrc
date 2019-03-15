@@ -1,0 +1,3 @@
+HiddenServiceDir /home/tor/tor/hidden_service/
+HiddenServiceVersion 3
+HiddenServicePort 80 electrs:50001
