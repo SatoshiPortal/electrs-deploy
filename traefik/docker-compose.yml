@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  traefik:
+    image: traefik:1.5.4
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+      - 50002:443
+    networks:
+      - electrsnet
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/traefik.toml
+      - ./acme.json:/acme.json
+    container_name: traefik
+
+networks:
+  electrsnet:
+    external: true

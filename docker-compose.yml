@@ -6,7 +6,7 @@ services:
 
   bitcoin:
     command: 1000:1000 bitcoind
-    image: cyphernode/bitcoin:v0.17.0
+    image: cyphernode/bitcoin:v0.17.1
     volumes:
       - "$HOME/data/bitcoin:/.bitcoin"
     restart: always
@@ -26,6 +26,7 @@ services:
       - dhparam:/etc/nginx/dhparam
       - certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
+#      - $PWD/nginx/50002.conf:/etc/nginx/vhost.d/electrum.kexkey.com:ro
     labels:
       - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
     restart: always
@@ -51,7 +52,7 @@ services:
 # docker run -d -p 8080:80 -v /home/debian/data_bitcoin_mainnet:/data --rm esplora bash -c "/srv/explorer/run.sh bitcoin-mainnet explorer"
   electrs:
     image: electrs-app:latest
-    command: electrs -vvvv --timestamp --db-dir /home/user/db --daemon-rpc-addr=bitcoin:8332
+    command: electrs -vvvv --timestamp --db-dir /home/user/db --daemon-rpc-addr=bitcoin:8332 --electrum-rpc-addr=0.0.0.0:50001
     depends_on:
       - letsencrypt
     env_file:
