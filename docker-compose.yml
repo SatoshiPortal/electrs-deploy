@@ -15,10 +15,10 @@ services:
 
   nginx-proxy:
     image: jwilder/nginx-proxy
+    command: echo "include /etc/nginx/conf.d/tcp/*.conf;" >> /etc/nginx/nginx.conf
     ports:
-      - "80:80"
       - "443:443"
-      - "50002:443"
+      - "50002:50002"
     volumes:
       - conf:/etc/nginx/conf.d
       - vhost:/etc/nginx/vhost.d
@@ -26,7 +26,8 @@ services:
       - dhparam:/etc/nginx/dhparam
       - certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-#      - $PWD/nginx/50002.conf:/etc/nginx/vhost.d/electrum.kexkey.com:ro
+      - $PWD/nginx/nginx.conf:/app/nginx-tcp.conf
+      - $PWD/nginx/bootstrap.sh:/app/bootstrap.sh
     labels:
       - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
     restart: always
@@ -49,7 +50,6 @@ services:
     networks:
       - electrsnet
 
-# docker run -d -p 8080:80 -v /home/debian/data_bitcoin_mainnet:/data --rm esplora bash -c "/srv/explorer/run.sh bitcoin-mainnet explorer"
   electrs:
     image: electrs-app:latest
     command: electrs -vvvv --timestamp --db-dir /home/user/db --daemon-rpc-addr=bitcoin:8332 --electrum-rpc-addr=0.0.0.0:50001
