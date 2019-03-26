@@ -13,10 +13,25 @@ services:
     networks:
       - electrsnet
 
+# docker run --rm -it \
+#       -v conf:/etc/nginx/conf.d \
+#       -v vhost:/etc/nginx/vhost.d \
+#       -v html:/usr/share/nginx/html \
+#       -v dhparam:/etc/nginx/dhparam \
+#       -v certs:/etc/nginx/certs:ro \
+#       -v /var/run/docker.sock:/tmp/docker.sock:ro \
+#       -v $PWD/nginx/nginx.conf:/app/nginx-tcp.conf \
+#       -v $PWD/nginx/bootstrap.sh:/app/bootstrap.sh \
+#       -l com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy \
+#       --network=electrsnet \
+#       -p 80:80 -p 443:443 -p 50002:50002 \
+#       jwilder/nginx-proxy ./bootstrap.sh bash
+
   nginx-proxy:
     image: jwilder/nginx-proxy
-    command: echo "include /etc/nginx/conf.d/tcp/*.conf;" >> /etc/nginx/nginx.conf
+    command: ./bootstrap.sh
     ports:
+      - "80:80"
       - "443:443"
       - "50002:50002"
     volumes:

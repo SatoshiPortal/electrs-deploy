@@ -37,3 +37,10 @@ cd ; mkdir data ; sudo mount /dev/vdc data/
 ```
 docker stack deploy -c docker-compose.yml electrs
 ```
+
+## Manual steps, in nginx-proxy container
+
+- When certs in, uncomment the include line in /etc/nginx/nginx.conf
+- Comment out the server block in /etc/nginx/conf.d/default.conf that contains all the SSL configs in it
+- restart nginx with `nginx -s reload`
+
