@@ -23,8 +23,9 @@ docker swarm init
 docker network create --driver=overlay --attachable --opt encrypted electrsnet
 ```
 
-## Do the following line only if data_bitcoin_mainnet doesn't already exist / isn't already mounted
+## Do the following line only if data doesn't already exist / isn't already mounted
 ```
+sudo mkfs.ext4 /dev/vdc
 cd ; mkdir data ; sudo mount /dev/vdc data/
 ```
 
