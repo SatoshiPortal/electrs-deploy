@@ -1,3 +1,6 @@
+cd tor
+docker build -t tor .
+cd ..
 git clone https://github.com/romanz/electrs
 cd electrs
 docker build -t electrs-app .

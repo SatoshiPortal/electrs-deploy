@@ -34,6 +34,13 @@ cd ; mkdir data ; sudo mount /dev/vdc data/
 ./build.sh
 ```
 
+## Configure your domain name
+
+Change files:
+
+- electrs.env
+- nginx/nginx.conf
+
 ## Start TLS manager (Let's Encrypt Companion) + Electrs
 ```
 docker stack deploy -c docker-compose.yml electrs
