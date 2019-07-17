@@ -6,7 +6,7 @@ services:
 
   bitcoin:
     command: 1000:1000 bitcoind
-    image: cyphernode/bitcoin:v0.17.1
+    image: cyphernode/bitcoin:v0.18.0
     volumes:
       - "$HOME/data/bitcoin:/.bitcoin"
     restart: always

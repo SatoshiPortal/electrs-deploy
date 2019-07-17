@@ -19,7 +19,7 @@ Hard reboot
 
 ## Init docker swarm and overlay network, once
 ```
-docker swarm init
+docker swarm init --task-history-limit 1
 docker network create --driver=overlay --attachable --opt encrypted electrsnet
 ```
 
